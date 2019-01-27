@@ -100,7 +100,7 @@ if __name__ == '__main__':
     video_list.append(link)
     if args.file:
         if os.access(args.file, os.R_OK) != True:
-            msg = 'WARNING: %s is not writable.' %(args.file)
+            msg = 'WARNING: %s is not readable.' %(args.file)
             print(msg)
         else:
             video_list.extend(get_entries(args.file))
