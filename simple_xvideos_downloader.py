@@ -25,17 +25,26 @@ def get_video(video_link):
     """
     func: get video contents in bytes
     """
+    video_content = None
+
     try:
         req = requests.session()
         s = req.get(video_link)
     except:
         msg = "WARNING: Failed to access the video link: %s." %(video_link)
+        print(msg)
     else:
         if s.status_code == 200:
             video_html = lxml.html.fromstring(s.text)
-            video_download_link = video_html.xpath('//div//*[@id="video-player-bg"]//a')[0].values()[0]
-            video = req.get(video_download_link, timeout=None)
-            video_content = video.content
+            try:
+                video_download_link = video_html.xpath('//div//*[@id="video-player-bg"]//a')[0].values()[0]
+            except:
+                video_content = None
+                msg = "WARNING: Failed to implement XPath query on the video link: %s." %(video_link)
+                print(msg)
+            else:
+                video = req.get(video_download_link, timeout=None)
+                video_content = video.content
         else:
             msg = "WARNING: Video URL %s returns non-200 response code: %d." %(video_link, s.status_code)
             print(msg)
@@ -73,9 +82,6 @@ def download(video_link):
     if video_content != None:
         write_video(filename, video_content)
         print('>>> %s Downloaded => %s.' %(video_uri, filename))
-    else:
-        msg = 'WARNING: No data retrieved from %s.' %(video_link)
-        print(msg)
 
 if __name__ == '__main__':
     """
@@ -89,21 +95,27 @@ if __name__ == '__main__':
     """
     parser = argparse.ArgumentParser(description="Simple XVideos Downloader")
     parser.add_argument("-d", "--targetdir", type=str, required=True, help="target save directory")
-    parser.add_argument("-l", "--link", type=str, required=True, help="video URL")
+    parser.add_argument("-l", "--link", type=str, help="video URL")
     parser.add_argument("-f", "--file", type=str, help="video URL list file")
     parser.add_argument("-w", "--worker", type=int, help="number of download parallel workers (default: 5)")
     args = parser.parse_args()
 
     target_dir = args.targetdir
-    link = args.link
-    
-    video_list.append(link)
+
+    if args.link:
+        link = args.link
+        video_list.append(link)
+
     if args.file:
         if os.access(args.file, os.R_OK) != True:
             msg = 'WARNING: %s is not readable.' %(args.file)
             print(msg)
         else:
             video_list.extend(get_entries(args.file))
+
+    if not args.link and not args.file:
+        print('error: at least one option -l/-f must be used.')
+        sys.exit(2)
 
     if os.access(target_dir, os.W_OK) != True:
         msg = 'ERROR: %s is not writable.' %(target_dir)

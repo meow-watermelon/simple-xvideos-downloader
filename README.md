@@ -7,7 +7,7 @@ simple-xvideos-downloader is a small tool to download video clips from XVideos.
 **Usage**
 
 ```
-usage: simple_xvideos_downloader.py [-h] -d TARGETDIR -l LINK [-f FILE]
+usage: simple_xvideos_downloader.py [-h] -d TARGETDIR [-l LINK] [-f FILE]
                                     [-w WORKER]
 
 Simple XVideos Downloader
@@ -20,7 +20,6 @@ optional arguments:
   -f FILE, --file FILE  video URL list file
   -w WORKER, --worker WORKER
                         number of download parallel workers (default: 5)
-
 ```
 
 *-d*: target directory to save downloaded video clips.
@@ -39,3 +38,5 @@ optional arguments:
 **20190126**: initial commit
 
 **20190126**: typo fix
+
+**20190128**: fix exceptions and make both -f/-l optional
