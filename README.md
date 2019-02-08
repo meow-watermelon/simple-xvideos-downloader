@@ -40,3 +40,5 @@ optional arguments:
 **20190126**: typo fix
 
 **20190128**: fix exceptions and make both -f/-l optional
+
+**20190207**: fix duplicated filenames issue

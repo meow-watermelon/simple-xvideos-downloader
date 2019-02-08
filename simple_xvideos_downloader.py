@@ -8,6 +8,7 @@ import requests
 import os
 import sys
 import urllib.parse
+import uuid
 
 def get_entries(list_file):
     """
@@ -74,8 +75,13 @@ def download(video_link):
     """
     func: download a video clip from a url
     """
+    uuid_extension = str(uuid.uuid4())
     video_uri = url_basename(video_link)
-    filename = target_dir+"/"+video_uri
+    """
+    it's possible the uri basenames are the same among
+    different urls. filename should be unique in this case
+    """
+    filename = target_dir+"/"+video_uri+"."+uuid_extension
 
     print('>>> Downloading %s...' %(video_uri))
     video_content = get_video(video_link)
